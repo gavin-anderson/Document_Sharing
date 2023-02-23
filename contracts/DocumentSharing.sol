@@ -14,11 +14,6 @@ contract DocumentSharing {
                 keccak256(abi.encodePacked(url))
         );
 
-        console.log("Original URL");
-        console.log(Ownership[msg.sender][documentId]);
-        console.log("Test URL");
-        console.log(url);
-
         _;
     }
 
@@ -32,23 +27,19 @@ contract DocumentSharing {
         view
         returns (bool)
     {
-        console.log("---------------");
-        console.log("Check Ownership");
         if (
             keccak256(abi.encodePacked(Ownership[msg.sender][documentId])) ==
             keccak256(abi.encodePacked(url))
         ) {
             console.log("This is the owner");
             return true;
+        } else {
+            console.log("This is not the owner");
+            return false;
         }
-        console.log("This is not the owner");
-        return false;
     }
 
     function checkAccess(string memory url) public view returns (bool) {
-        console.log("---------------");
-        console.log("Checking access");
-        console.log(Accessible[url][msg.sender]);
         return Accessible[url][msg.sender];
     }
 
@@ -58,8 +49,6 @@ contract DocumentSharing {
         uint256 documentId
     ) public owner(url, documentId) {
         Accessible[url][addy] = true;
-        console.log("---------------");
-        console.log("Added access");
     }
 
     function removeAccess(
@@ -68,17 +57,11 @@ contract DocumentSharing {
         uint256 documentId
     ) external owner(url, documentId) {
         delete Accessible[url][addy];
-        console.log("---------------");
-        console.log("Removed access");
-        console.log(Accessible[url][addy]);
     }
 
     function addOwnership(string memory url, uint256 documentId) external {
-        console.log("Add ownership");
         Ownership[msg.sender][documentId] = url;
         addAccess(msg.sender, url, documentId);
-        console.log("---------------");
-        console.log("Finished add ownership");
     }
 
     function removeOwnership(string memory url, uint256 documentId)
@@ -86,7 +69,6 @@ contract DocumentSharing {
         owner(url, documentId)
     {
         delete Ownership[msg.sender][documentId];
-        console.log("Removed Owner");
     }
 
     function transferOwnership(
@@ -96,7 +78,5 @@ contract DocumentSharing {
     ) external owner(url, documentId) {
         removeOwnership(url, documentId);
         Ownership[addy][documentId] = url;
-        console.log("---------------");
-        console.log("Transfered ownership");
     }
 }
